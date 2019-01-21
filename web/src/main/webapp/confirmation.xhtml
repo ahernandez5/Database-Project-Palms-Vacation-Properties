@@ -1,0 +1,118 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition template="WEB-INF/template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:b="http://bootsfaces.net/ui"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://xmlns.jcp.org/jsf/passthrough">
+    <ui:param name="smallbanner" value="true"/>
+    <f:metadata>
+        <f:viewAction action="#{bookingConfirmationBean.prepare}"/>
+        <f:viewParam name="bid" value="#{bookingConfirmationBean.bid}"/>
+    </f:metadata>
+
+    <ui:define name="content">
+        <section class="booking_form">
+            <div class="container">
+                <b:form>
+                    <b:row>
+                        <b:column col-sm="6">
+                            <h2>Your Booking is Confirmed</h2>
+                            <h4>Confirmation Nr: #{bookingConfirmationBean.booking.confirmNr}</h4>
+                        </b:column>
+                        <b:column col-sm="6" style-class="text-right" style="margin-top: 15px;">
+                            <b:link outcome="invoice"
+                                        onclick="window.open(this.href, 'Invoice # #{bookingConfirmationBean.booking.bid}', 'boolbar=no,scrollbar=yes,top=170, left=170, width=1000, height=800'); return false;"
+                                        tooltip="Click here to view invoice!"
+                                        icon-awesome="file-invoice" icon-regular="true" icon-size="3x">
+                                <f:param name="bid" value="#{bookingConfirmationBean.booking.bid}"/>
+                            </b:link>
+                        </b:column>
+                    </b:row>
+                    <b:row>
+                        <b:column col-sm="6">
+                            <b:carousel pause="true">
+                                <b:carouselItem>
+                                    <b:image name="images/property/room#{bookingConfirmationBean.property.pid%5+1}/#{bookingConfirmationBean.property.pid%5+1}a.jpg" style-class="img-responsive"/>
+                                </b:carouselItem>
+                                <b:carouselItem>
+                                    <b:image name="images/property/room#{bookingConfirmationBean.property.pid%5+1}/#{bookingConfirmationBean.property.pid%5+1}b.jpg" style-class="img-responsive"/>
+                                </b:carouselItem>
+                            </b:carousel>
+                        </b:column>
+                        <!-- example from https://showcase.bootsfaces.net/bootstrap/carousel.jsf -->
+                        <b:column col-sm="6">
+                            <b:row>             
+                                <b:panel title="Property Information" look="primary" id="Info1">
+                                        <ui:param name="addr" value="#{empty bookingConfirmationBean.property.addressSet ? null : bookingConfirmationBean.property.addressSet.iterator().next()}"/>
+                                        <strong>Address:</strong>
+                                        <ui:fragment rendered="#{addr ne null}">
+                                            <b:column col-md="12">#{addr.street}</b:column>
+                                            <b:column col-md="12">#{addr.city}</b:column>
+                                            <b:column col-md="12">#{addr.postalCode}</b:column>
+                                            <b:column col-md="12">#{addr.country}</b:column>
+                                        </ui:fragment>
+                                        <ui:fragment rendered="#{addr eq null}">
+                                            <b:column col-md="12">No Street</b:column>
+                                            <b:column col-md="12">No City</b:column>
+                                            <b:column col-md="12">No Zip Code</b:column>
+                                            <b:column col-md="12">No Country</b:column>
+                                        </ui:fragment>
+                                    </b:panel>
+                                    <b:accordion>                                    
+                                    <b:panel title="Order Summary" look="info" id="Info2">
+                                        <b:panelGrid col-spans="6,6" styleClass="text-right">
+                                            <h:outputLabel value="Per Night"/>
+                                            <h:outputText value="#{bookingConfirmationBean.property.price}">
+                                                <f:convertNumber type="currency" currencyCode="USD"/>
+                                            </h:outputText>
+                                            <h:outputLabel value="Check In"/>
+                                            <h:outputText value="#{bookingConfirmationBean.booking.cin}"/>
+                                            <h:outputLabel value="Check Out"/>
+                                            <h:outputText value="#{bookingConfirmationBean.booking.cout}"/>
+                                            <h:outputLabel value="Duration Days"/>
+                                            <h:outputText value="#{bookingCostBean.stayDuration}"/>
+                                            <h:outputLabel value="Total Cost"/>
+                                            <ui:fragment>
+                                                <strong>
+                                                    <h:outputText value="#{bookingCostBean.priceForStay(bookingConfirmationBean.booking)}">
+                                                        <f:convertNumber type="currency" currencyCode="USD"/>
+                                                    </h:outputText>
+                                                </strong>
+                                            </ui:fragment>
+                                        </b:panelGrid>
+                                    </b:panel>                                        
+                                    <b:panel title="Your Order Details" look="info" id="InfoPanel">
+                                        <b:row>
+                                            <b:column col-md="12">
+                                                <h4>Name:</h4>
+                                            </b:column>
+                                            <b:inputText value="#{bookingConfirmationBean.guest.firstname}" label="Firstname" placeholder="Firstname" col-md="4" readonly="true"/>
+                                            <b:inputText value="#{bookingConfirmationBean.guest.middlename}" label="Middlename" placeholder="Middlename" col-md="4" readonly="true"/>
+                                            <b:inputText value="#{bookingConfirmationBean.guest.lastname}" label="Lastname" placeholder="Lastname" col-md="4" readonly="true"/>
+                                        </b:row>
+                                        <b:row>
+                                            <b:column col-md="12">
+                                                <h4>Address:</h4>
+                                            </b:column>                                            
+                                            <ui:param name="guestAddr" value="#{empty bookingConfirmationBean.guest.livesatSet ? null : bookingConfirmationBean.guest.livesatSet.iterator().next().address}"/>
+                                            <b:inputText value="#{guestAddr.street}" label="Street" placeholder="Street" col-md="6" readonly="true"/>
+                                            <b:inputText value="#{guestAddr.city}" label="City" placeholder="City" col-md="6" readonly="true"/>
+                                            <b:inputText value="#{guestAddr.postalCode}" label="Zip" placeholder="Zip" col-md="6" readonly="true"/>
+                                            <b:inputText value="#{guestAddr.country}" label="Country" placeholder="Country" col-md="6" readonly="true"/>                                            
+                                        </b:row>
+                                        <b:row>
+                                            <b:messages show-detail="true" show-summary="true" col-md="12"/>
+                                        </b:row>
+                                    </b:panel>                                  
+                                </b:accordion>
+                            </b:row>
+                            
+                        </b:column>
+                    </b:row>
+                </b:form>
+            </div>
+        </section>
+    </ui:define>
+</ui:composition>

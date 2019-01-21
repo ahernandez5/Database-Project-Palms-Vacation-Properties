@@ -1,0 +1,164 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:b="http://bootsfaces.net/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"     
+      xmlns:o="http://omnifaces.org/ui"
+      xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <f:metadata>
+        <f:viewAction action="#{bookingConfirmationBean.prepare}"/>
+        <f:viewParam name="bid" value="#{bookingConfirmationBean.bid}"/>
+    </f:metadata>
+    <h:head>
+        <h:outputStylesheet name="style.css"/>
+        <style>
+            .extra-spacing {                           
+                height: 200px;
+            }
+        </style>
+        <style media="print">
+            @page  
+            { 
+                size: letter;
+                margin: 15mm 15mm 15mm 15mm;  
+            } 
+
+            body  
+            { 
+                margin: 0px;  
+            } 
+            @media print {
+                .hidden-print {
+                  display: none !important;
+                }
+              }
+        </style>
+    </h:head>
+    <h:body>       
+        <b:button onclick="window.print()" styleClass="hidden-print" icon-awesome="print" icon-regular="true" icon-size="3x" tooltip="Click here to print this page!" style="margin-left: 50px; margin-top: 25px;"/>
+        <table class="table" style="max-width: 800px; margin: 0 auto; margin-top: 50px;">        
+            <tr>
+                <th colspan="3">
+                    <h3>Palms Vacation Properties</h3>
+                    <h6>Telephone: 612-123-1234</h6>
+                </th>
+                <th>                                       
+                    <h5>Inv. ##{bookingConfirmationBean.booking.bid}</h5>
+                    <h6>Confirmation Nr: <strong>#{bookingConfirmationBean.booking.confirmNr}</strong></h6>
+                </th>
+                <th>
+                    <h5>
+                        <h:outputText value="#{bookingConfirmationBean.booking.bookingDate}">
+                            <f:convertDateTime type="localDateTime"/>
+                        </h:outputText>
+                    </h5>
+                </th>
+            </tr>
+                <tr>
+                    <th colspan="2">
+                        <ui:param name="addr" value="#{empty bookingConfirmationBean.property.addressSet ? null : bookingConfirmationBean.property.addressSet.iterator().next()}"/>
+                        <b:column col-md="12"><h4>Address:</h4></b:column>
+                        <ui:fragment rendered="#{addr ne null}">
+                            <b:column col-md="11" offset-md="1">#{addr.street}</b:column>
+                            <b:column col-md="11" offset-md="1">#{addr.city}</b:column>
+                            <b:column col-md="11" offset-md="1">#{addr.postalCode}</b:column>
+                            <b:column col-md="11" offset-md="1">#{addr.country}</b:column>
+                        </ui:fragment>
+                        <ui:fragment rendered="#{addr eq null}">
+                            <b:column col-md="11" offset-md="1">No Street</b:column>
+                            <b:column col-md="11" offset-md="1">No City</b:column>
+                            <b:column col-md="11" offset-md="1">No Zip Code</b:column>
+                            <b:column col-md="11" offset-md="1">No Country</b:column>
+                        </ui:fragment>                        
+                    </th>               
+                    <th colspan="2" class="text-left">
+                        <b:column col-md="12"><h4>Guest:</h4></b:column>
+                        <b:column col-md="11" offset-md="1">
+                            #{bookingConfirmationBean.guest.firstname} #{bookingConfirmationBean.guest.middlename} #{bookingConfirmationBean.guest.lastname}
+                        </b:column>
+                        <ui:param name="guestAddr" value="#{empty bookingConfirmationBean.guest.livesatSet ? null : bookingConfirmationBean.guest.livesatSet.iterator().next().address}"/>                                                                      
+                        <span style="font-weight: normal !important">
+                        <b:column col-md="11" offset-md="1"><h:outputText value="#{guestAddr.street}"/></b:column>
+                        <b:column col-md="11" offset-md="1"><h:outputText value="#{guestAddr.city}"/></b:column>
+                        <b:column col-md="11" offset-md="1"><h:outputText value="#{guestAddr.postalCode}"/></b:column>
+                        <b:column col-md="11" offset-md="1"><h:outputText value="#{guestAddr.country}"/></b:column>   
+                        </span>
+                    </th>
+                    <th colspan="1" class="text-right">
+                        <h5><h:outputLabel value="Check In"/></h5>
+                        <h6><h:outputText value="#{bookingConfirmationBean.booking.cin}"/></h6>
+                        <h5><h:outputLabel value="Check Out"/></h5>
+                        <h6><h:outputText value="#{bookingConfirmationBean.booking.cout}"/></h6>
+                    </th>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Date</strong>
+                    </td>
+                    <td class="text-center">
+                        <strong>Description</strong>
+                    </td>
+                    <td class="text-center">
+                        <strong>Price</strong>
+                    </td>
+                    <td class="text-center">
+                        <strong>Qty</strong>
+                    </td>
+                    <td class="text-right">
+                        <strong>Total</strong>
+                    </td>
+                </tr>                
+                <tr>
+                    <td>
+                        <h:outputText value="#{bookingConfirmationBean.booking.bookingDate}">
+                            <f:convertDateTime type="localDate"/>
+                        </h:outputText>
+                    </td>
+                    <td class="text-center">
+                        Per Night
+                    </td>
+                    <td class="text-center">
+                        <h:outputText value="#{bookingConfirmationBean.property.price}">
+                            <f:convertNumber type="currency" currencyCode="USD"/>
+                        </h:outputText>                            
+                    </td>
+                    <td class="text-center">
+                        <h:outputText value="#{bookingCostBean.stayDuration}"/>
+                    </td>                        
+                    <td class="text-right">
+                        <h:outputText value="#{bookingCostBean.priceForStay(bookingConfirmationBean.property)}" rendered="#{not empty bookingConfirmationBean.property}">
+                            <f:convertNumber type="currency" currencyCode="USD"/>
+                        </h:outputText>
+                    </td>
+                </tr>
+                <tr class="extra-spacing"></tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td colspan="2" class="text-right"><strong>Payment Due</strong></td>
+                    <td class="text-right">
+                        <strong>
+                            <h:outputText value="#{bookingCostBean.priceForStay(bookingConfirmationBean.property)}" rendered="#{not empty bookingConfirmationBean.property}">
+                                <f:convertNumber type="currency" currencyCode="USD"/>
+                            </h:outputText>
+                        </strong>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </table>      
+        <script>
+            setTimeout(function() {
+                //window.print();
+            }, 1000);            
+        </script>
+    </h:body>
+</html>

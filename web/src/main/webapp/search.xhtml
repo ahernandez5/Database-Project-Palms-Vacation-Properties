@@ -1,0 +1,133 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition template="WEB-INF/template.xhtml" 
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:b="http://bootsfaces.net/ui"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <f:metadata>
+        <f:viewAction action="#{indexBean.prepare}"/>
+        <f:viewParam name="search" value="#{indexBean.search}"/>
+        <f:viewParam name="sort" value="#{indexBean.sorting}"/>
+        <f:viewParam name="rooms_from" value="#{indexBean.roomLimit.min}"/>
+        <f:viewParam name="rooms_to" value="#{indexBean.roomLimit.max}"/>
+        <f:viewParam name="size_from" value="#{indexBean.sizeLimit.min}"/>
+        <f:viewParam name="size_to" value="#{indexBean.sizeLimit.max}"/>    
+        <f:viewParam name="price_from" value="#{indexBean.priceLimit.min}"/>
+        <f:viewParam name="price_to" value="#{indexBean.priceLimit.max}"/>             
+        <f:viewParam name="date_from" value="#{indexBean.dateLimit.min}">
+            <f:converter converterId="localDateGetParamConverter"/>
+        </f:viewParam>
+        <f:viewParam name="date_to" value="#{indexBean.dateLimit.max}">
+            <f:converter converterId="localDateGetParamConverter"/>
+        </f:viewParam>
+    </f:metadata>    
+    <ui:define name="content">        
+        <section class="search_results section_gap">
+            <div class="container">                
+                <b:form>
+                    <b:column col-md="8">                    
+                        <h2>Search results</h2>
+                    </b:column>
+                    <b:column col-md="4">
+                        <b:navBar inverse="true">
+                            <b:navbarLinks class="text-center">                 
+                                <b:navCommandLink value="Min Price" include-view-params="true" outcome="search">
+                                    <f:param name="sort" value="price_min"/>
+                                </b:navCommandLink>
+                                <b:navCommandLink value="Max Price" include-view-params="true" outcome="search">
+                                    <f:param name="sort" value="price_max"/>
+                                </b:navCommandLink>
+                            </b:navbarLinks>
+                        </b:navBar>
+                    </b:column>
+                    <b:messages show-detail="true" show-icon="true" showSummary="true" col-md="12"/>
+                    <b:dataTable value="#{indexBean.results}" var="pr" paginated="true" col-md="12" searching="false" border="false" multi-column-search="false" save-state="false">
+                        <b:dataTableColumn label="" style-class="col-md-4" orderable="false">
+                            <b:carousel pause="true">
+                                <b:carouselItem>
+                                    <b:image name="images/property/room#{pr.pid%5+1}/#{pr.pid%5+1}a.jpg" style-class="img-responsive"/>
+                                </b:carouselItem>
+                                <b:carouselItem>
+                                    <b:image name="images/property/room#{pr.pid%5+1}/#{pr.pid%5+1}b.jpg" style-class="img-responsive"/>
+                                </b:carouselItem>
+                            </b:carousel>
+                            <b:column class="text-center">
+                                <ui:fragment rendered="#{pr.averageRating ne 0}">
+                                    <c:forEach begin="1" end="5" var="i" step="1">                                    
+                                        <ui:fragment rendered="#{pr.averageRating ge (i)}">
+                                            <a href="#"><i class="fa fa-star"></i></a>
+                                        </ui:fragment>
+                                        <ui:fragment rendered="#{pr.averageRating gt i and pr.averageRating lt (i + 1)}">
+                                            <a href="#"><i class="fa fa-star-half-o"></i></a>                                        
+                                        </ui:fragment>
+                                    </c:forEach>
+                                    (#{pr.propertyRatingSet.size()})
+                                </ui:fragment>
+                            </b:column>
+                        </b:dataTableColumn>
+                        <b:dataTableColumn label="" orderable="false">
+                            <ui:param name="addr" value="#{empty pr.addressSet? null : pr.addressSet.iterator().next()}"/>
+                            <b:column col-md="12">
+                                <b:panel title="Description" collapsible="false">#{pr.description}</b:panel>
+                            </b:column>
+                            <hr class="col-md-12"/>
+                            <b:panel col-md="12">
+                                <b:row>
+                                    <b:column col-sm="3" class="text-center">
+                                        #{pr.rooms eq 0 ? 'Studio' : pr.rooms} 
+                                    </b:column>
+                                    <b:iconAwesome col-sm="3" name="bed" solid="true" class="text-left"/>
+                                    <b:column col-sm="3" class="text-center">
+                                        #{pr.size eq null or pr.size eq 0? 'Unspecified' : pr.size}
+                                    </b:column>
+                                    <b:iconAwesome col-sm="3" name="ruler" solid="true" class="text-left"/>
+                                </b:row>
+                            </b:panel>
+                        </b:dataTableColumn>
+                        <b:dataTableColumn label="" orderable="false">
+                            <b:column col-md="12" class="text-center">
+                                <h3>
+                                    <strong>
+                                        <h:outputText value="#{pr.price}">
+                                            <f:convertNumber type="currency" currencyCode="USD"/>
+                                        </h:outputText>
+                                        Per Night
+                                    </strong>
+                                </h3>
+                                <ui:fragment rendered="#{bookingCostBean.stayDuration ne 0}">
+                                    <h4>
+                                        <h:outputText value="#{bookingCostBean.priceForStay(pr)}">
+                                            <f:convertNumber type="currency" currencyCode="USD"/> 
+                                        </h:outputText>
+                                        for #{bookingCostBean.stayDuration} day stay
+                                    </h4>
+                                </ui:fragment>
+                            </b:column>                            
+                            <b:panel col-md="12" title="Address" rendered="#{addr ne null}" collapsible="false">
+                                <b:column col-md="12">#{addr.street}</b:column>
+                                <b:column col-md="12">#{addr.city}</b:column>
+                                <b:column col-md="12">#{addr.postalCode}</b:column>
+                                <b:column col-md="12">#{addr.country}</b:column>
+                            </b:panel>    
+                            <b:panel col-md="12" styleClass="searchInfoBox" rendered="#{addr eq null}">
+                                <b:column col-md="12">No Street</b:column>
+                                <b:column col-md="12">No City</b:column>
+                                <b:column col-md="12">No Zip Code</b:column>
+                                <b:column col-md="12">No Country</b:column>
+                            </b:panel> 
+                            <b:button styleClass="text-center book-btn" col-md="12" size="lg" outcome="book" look="primary" icon-awesome="bed" icon-solid="true" value="Book Now!">
+                                <f:param name="pid" value="#{pr.pid}"/>
+                                <o:param name="date_from" value="#{indexBean.dateLimit.min}" converter="localDateGetParamConverter"/>
+                                <o:param name="date_to" value="#{indexBean.dateLimit.max}" converter="localDateGetParamConverter"/>
+                            </b:button>
+                        </b:dataTableColumn>
+                    </b:dataTable>
+                </b:form>
+            </div>
+        </section>        
+    </ui:define>
+</ui:composition>

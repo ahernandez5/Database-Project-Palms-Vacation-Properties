@@ -1,0 +1,111 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:b="http://bootsfaces.net/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:o="http://omnifaces.org/ui"
+      xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <title>Palms Vacation Properties</title>
+        <h:outputStylesheet name="style.css"/>
+    </h:head>
+    <h:body>
+        <header class="header_area">
+            <div class="container">
+                <b:navBar fluid="true" inverse="true" brand-img="#{resource['images/logo.png']}" brand-img-style-class="col-md-12 col-sm-4 col-xs-3" fixed="top">
+                    <b:navbarLinks pull="right">
+                        <b:navLink value="Home" outcome="index"/>
+                        <b:navLink value="Search" outcome="search" include-view-params="true"/>
+                        <b:navLink value="Bookings" outcome="bookings"/>
+                    </b:navbarLinks>
+                </b:navBar>
+            </div>
+        </header>
+        <section class="banner_area #{smallbanner ne true ? '' : 'small-banner'}">
+            <div class="hotel_booking_area position">
+                <div class="container">
+                    <div class="hotel_booking_table">
+                        <b:column col-sm="12" col-md="#{smallbanner ne true ? 10 : 12}" offset-md="#{not smallbanner ? 2 : 0}">
+                            <o:form includeViewParams="true">
+                                <b:panel styleClass="search_box">
+                                    <b:inputText placeholder="Destination, location, landmark, or address" col-md="12" field-size="#{smallbanner ? 'md' : 'lg'}" value="#{indexBean.search}" label="Search">
+                                        <f:facet name="append">
+                                            <b:iconAwesome name="search" solid="true"/>
+                                        </f:facet>
+                                    </b:inputText>
+                                    <b:dateTimePicker placeholder="Arrival Date" value="#{indexBean.dateFrom}" showTime="false" col-sm="#{smallbanner ? '3' : '6'}" label="Check In"/>
+                                    <b:dateTimePicker placeholder="Departure Date" value="#{indexBean.dateTo}" showTime="false" col-sm="#{smallbanner ? '3' : '6'}" label="Check Out"/>
+                                    <c:if test="#{not smallbanner}">
+                                        <b:selectOneMenu title="Rooms" col-sm="3" value="#{indexBean.roomLimit.min}" label="Rooms To">
+                                            <f:selectItem itemValue="#{null}" itemLabel="Any"/>
+                                            <f:selectItems value="#{[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}"/>
+                                            <f:facet name="prepend">
+                                                <b:iconAwesome name="bed" solid="true"/>
+                                            </f:facet>
+                                        </b:selectOneMenu>
+                                        <b:selectOneMenu title="Rooms" col-sm="3" value="#{indexBean.roomLimit.max}" label="Rooms From">
+                                            <f:selectItem itemValue="#{null}" itemLabel="Any"/>
+                                            <f:selectItems value="#{[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}"/>
+                                            <f:facet name="prepend">
+                                                <b:iconAwesome name="bed" solid="true"/>
+                                            </f:facet>
+                                        </b:selectOneMenu>
+                                        <b:selectOneMenu title="Size" col-sm="3" value="#{indexBean.sizeLimit.min}" label="Size From">
+                                            <f:selectItem itemValue="#{null}" itemLabel="Any"/>
+                                            <f:selectItems value="#{[100, 200, 400, 800, 1200, 1600, 2000, 2500, 5000]}"/>
+                                            <f:facet name="prepend">
+                                                <b:iconAwesome name="ruler" solid="true"/>
+                                            </f:facet>                                            
+                                        </b:selectOneMenu>
+                                        <b:selectOneMenu title="Size" col-sm="3" value="#{indexBean.sizeLimit.max}" label="Size To">
+                                            <f:selectItem itemValue="#{null}" itemLabel="Any"/>
+                                            <f:selectItems value="#{[100, 200, 400, 800, 1200, 1600, 2000, 2500, 5000]}"/>
+                                            <f:facet name="prepend">
+                                                <b:iconAwesome name="ruler" solid="true"/>
+                                            </f:facet>
+                                        </b:selectOneMenu>
+                                        <b:selectOneMenu title="Size" col-sm="3" value="#{indexBean.priceLimit.min}" label="Price From">
+                                            <f:selectItem itemValue="#{null}" itemLabel="Any"/>
+                                            <f:selectItems value="#{[25, 50, 75, 100, 125, 150, 200, 250, 300, 350, 400, 500, 750, 1000, 1500]}"/>
+                                            <f:facet name="prepend">
+                                                <b:iconAwesome name="usd" solid="true"/>
+                                            </f:facet>
+                                        </b:selectOneMenu>
+                                        <b:selectOneMenu title="Size" col-sm="3" value="#{indexBean.priceLimit.max}" label="Price To">
+                                            <f:selectItem itemValue="#{null}" itemLabel="Any"/>
+                                            <f:selectItems value="#{[25, 50, 75, 100, 125, 150, 200, 250, 300, 350, 400, 500, 750, 1000, 1500]}"/>
+                                            <f:facet name="prepend">
+                                                <b:iconAwesome name="usd" solid="true"/>
+                                            </f:facet>
+                                        </b:selectOneMenu>
+                                    </c:if>
+                                    <b:commandButton value="Search" style-class="btn" look="primary" iconAwesome="search" 
+                                                     style="margin-top: #{smallbanner ? 25 : 20}px;"
+                                                     action="search?faces-redirect=true&amp;includeViewParams=true" col-sm="6" size="#{smallbanner ? 'md' : 'lg'}">
+                                        <f:ajax execute="@form"/>
+                                    </b:commandButton>
+                                </b:panel>
+                            </o:form>
+                         </b:column>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <ui:insert name="content"></ui:insert>
+        <footer class="footer-area section_gap">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12 footer-social text-center" style="margin-top:25px;">
+                        <a href="#"><i class="fa fa-facebook"></i></a>
+                        <a href="#"><i class="fa fa-twitter"></i></a>
+                        <a href="#"><i class="fa fa-dribbble"></i></a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </h:body>
+</html>
+

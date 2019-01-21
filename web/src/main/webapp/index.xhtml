@@ -1,0 +1,127 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition template="WEB-INF/template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:b="http://bootsfaces.net/ui"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">"
+    <f:metadata>
+        <f:viewAction action="#{indexBean.prepare()}"/>
+    </f:metadata>
+    <ui:define name="content">
+        <section class="accomodation_area section_gap">
+            <div class="container">
+                <div class="section_title text-center">
+                    <h2 class="title_color">Palms</h2>
+                    <p>Find your vacation property with Palms Vacation Properties!</p>
+                </div>
+                <b:row>
+                    <ui:repeat value="#{indexBean.results}" var="pr" size="4">
+                        <b:link outcome="book" style-class="front-tag-card">
+                            <f:param name="pid" value="#{pr.pid}"/>
+                            <b:column col-sm="3" col-xs="6">
+                                <b:row>                                
+                                    <b:column class="text-center text-heading">
+                                          <h4>#{pr.description}</h4>
+                                    </b:column>
+                                    <b:carousel pause="true" start-animation="false" show-indicators="false" col-md="12">
+                                        <b:carouselItem>
+                                            <b:image name="images/property/room#{pr.pid%5+1}/#{pr.pid%5+1}a.jpg" style-class="img-responsive"/>
+                                        </b:carouselItem>
+                                        <b:carouselItem>
+                                            <b:image name="images/property/room#{pr.pid%5+1}/#{pr.pid%5+1}b.jpg" style-class="img-responsive"/>
+                                        </b:carouselItem>
+                                    </b:carousel>
+                                    <b:column class="text-center">
+                                        <h3>
+                                            <h:outputText value="#{pr.price}">
+                                                <f:convertNumber type="currency" currencyCode="USD"/>
+                                            </h:outputText>
+                                        </h3>
+                                    </b:column>
+                                    <b:column class="text-center">
+                                        <ui:fragment rendered="#{pr.averageRating ne 0}">
+                                            <c:forEach begin="1" end="5" var="i" step="1">
+                                                <ui:fragment rendered="#{pr.averageRating ge (i)}">
+                                                    <a href="#"><i class="fa fa-star"></i></a>
+                                                </ui:fragment>
+                                                <ui:fragment rendered="#{pr.averageRating gt i and pr.averageRating lt (i + 1)}">
+                                                    <a href="#"><i class="fa fa-star-half-o"></i></a>
+                                                </ui:fragment>
+                                            </c:forEach>
+                                        </ui:fragment>
+                                    </b:column>
+                                </b:row>
+                            </b:column>
+                        </b:link>
+                    </ui:repeat>
+                </b:row>                
+            </div>
+        </section>
+        <section class="testimonial_area section_gap" style="margin-top: 50px;">
+            <div class="container">
+                <div class="col-md-12">
+                    <h3>See what our customers are saying...</h3>
+                </div>
+                <b:panel col-sm="3">
+                    <b:image name="images/testimony/1.jpg" styleClass="img-circle" col-md="4"/>
+                    <b:column col-md="8">
+                        <a href="#"><h4>Jane Nonware</h4></a>
+                        <a href="#"><i class="fa fa-star"></i></a>
+                        <a href="#"><i class="fa fa-star"></i></a>
+                        <a href="#"><i class="fa fa-star"></i></a>
+                        <a href="#"><i class="fa fa-star"></i></a>
+                        <a href="#"><i class="fa fa-star-half-o"></i></a>
+                    </b:column>
+                    <b:column col-md="8" offset-md="4">
+                        <p>A great service and wonderful places to stay at!</p>
+                    </b:column>
+                </b:panel>
+                <b:panel col-sm="3">
+                    <b:image name="images/testimony/2.jpg" styleClass="img-circle" col-md="4"/>
+                    <b:column col-md="8">
+                        <a href="#"><h4>Joline Nobody</h4></a>
+                        <a href="#"><i class="fa fa-star"></i></a>
+                        <a href="#"><i class="fa fa-star"></i></a>
+                        <a href="#"><i class="fa fa-star"></i></a>
+                        <a href="#"><i class="fa fa-star"></i></a>
+                        <a href="#"><i class="fa fa-star-half-o"></i></a>
+                    </b:column>
+                    <b:column col-md="8" offset-md="4">
+                        <p>A testimonously great stuff!</p>
+                    </b:column>
+                </b:panel>
+                <b:panel col-sm="3">
+                    <b:image name="images/testimony/3.jpg" styleClass="img-circle" col-md="4"/>
+                    <b:column col-md="8">
+                        <a href="#"><h4>Das Boots</h4></a>
+                        <a href="#"><i class="fa fa-star"></i></a>
+                        <a href="#"><i class="fa fa-star"></i></a>
+                        <a href="#"><i class="fa fa-star"></i></a>
+                        <a href="#"><i class="fa fa-star"></i></a>
+                        <a href="#"><i class="fa fa-star-half-o"></i></a>
+                    </b:column>
+                    <b:column col-md="8" offset-md="4">
+                        <p>I didn't like it, but I'm still being featured in a review, that's how great the service is!</p>
+                    </b:column>
+                </b:panel>
+                <b:panel col-sm="3">
+                    <b:image name="images/testimony/4.jpg" styleClass="img-circle" col-md="4"/>
+                    <b:column col-md="8">
+                        <a href="#"><h4>Iwana Review</h4></a>
+                        <a href="#"><i class="fa fa-star"></i></a>
+                        <a href="#"><i class="fa fa-star"></i></a>
+                        <a href="#"><i class="fa fa-star"></i></a>
+                        <a href="#"><i class="fa fa-star"></i></a>
+                        <a href="#"><i class="fa fa-star-half-o"></i></a>
+                    </b:column>
+                    <b:column col-md="8" offset-md="4">
+                        <p>Usually I prefer calling directly, but Palms saved me a great deal of problem with the quick service and speedy checkout!</p>
+                    </b:column>
+                </b:panel>
+            </div>
+        </section>
+    </ui:define>
+</ui:composition>

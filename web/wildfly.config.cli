@@ -1,0 +1,36 @@
+
+
+
+    
+    
+    module add \
+        --name=org.postgresql \
+        --resources=/home/thor/Documents/CSUB/aurora_cmps3420/palms/web/pgjdbc-ng-0.6-complete.jar \
+        --resource-delimiter=, \
+        --dependencies=javax.api,javax.transaction.api,javax.xml.bind.api
+
+    /subsystem=datasources/jdbc-driver=postgresql:add( \
+        driver-name=postgresql, \
+        driver-module-name=org.postgresql, \
+        driver-class-name=com.impossibl.postgres.jdbc.PGDriver, \
+        driver-datasource-class-name=com.impossibl.postgres.jdbc.PGDataSource, \
+        driver-xa-datasource-class-name=com.impossibl.postgres.jdbc.xa.PGXADataSource \
+    )
+    
+    batch
+    
+    /subsystem=datasources/data-source=palms:add( \
+        jndi-name=java:/jdbc/palms, \
+        driver-name=postgresql, \
+        connection-url=jdbc:pgsql://localhost:5432/palms, \
+        exception-sorter-class-name=org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLExceptionSorter, \
+        valid-connection-checker-class-name=org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLValidConnectionChecker, \
+        password=palms, \
+        user-name=palms \
+    )
+    
+    /subsystem=datasources/data-source=palms/connection-properties=database:add(value=palms)
+    
+    run-batch
+    
+    reload

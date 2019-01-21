@@ -1,0 +1,128 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition template="WEB-INF/template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:b="http://bootsfaces.net/ui"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://xmlns.jcp.org/jsf/passthrough">
+    <ui:param name="smallbanner" value="true"/>
+    <f:metadata>
+        <f:viewAction action="#{bookingActivityBean.prepare}"/>
+        <f:viewParam name="pid" value="#{bookingActivityBean.pid}"/>
+        <f:viewParam name="date_from" value="#{indexBean.dateLimit.min}">
+            <f:converter converterId="localDateGetParamConverter"/>
+        </f:viewParam>
+        <f:viewParam name="date_to" value="#{indexBean.dateLimit.max}">
+            <f:converter converterId="localDateGetParamConverter"/>
+        </f:viewParam>
+    </f:metadata>
+
+    <ui:define name="content">
+        <section class="booking_form">
+            <div class="container">
+                <b:form>
+                    <b:row>
+                        <h2>Book Now</h2>
+                    </b:row>
+                    <b:row>
+                        <b:column col-sm="6">
+                            <b:carousel pause="true">
+                                <b:carouselItem>
+                                    <b:image name="images/property/room#{bookingActivityBean.property.pid%5+1}/#{bookingActivityBean.property.pid%5+1}a.jpg" style-class="img-responsive"/>
+                                </b:carouselItem>
+                                <b:carouselItem>
+                                    <b:image name="images/property/room#{bookingActivityBean.property.pid%5+1}/#{bookingActivityBean.property.pid%5+1}b.jpg" style-class="img-responsive"/>
+                                </b:carouselItem>
+                            </b:carousel>
+                        </b:column>
+                        <!-- example from https://showcase.bootsfaces.net/bootstrap/carousel.jsf -->
+                        <b:column col-sm="6">
+                            <b:row>
+                                <b:panel collapsible="false" title="Property Information" look="primary">
+                                    <ui:param name="addr" value="#{empty bookingActivityBean.property.addressSet ? null : bookingActivityBean.property.addressSet.iterator().next()}"/>
+                                    <strong>Address:</strong>
+                                    <ui:fragment rendered="#{addr ne null}">
+                                        <b:column col-md="12">#{addr.street}</b:column>
+                                        <b:column col-md="12">#{addr.city}</b:column>
+                                        <b:column col-md="12">#{addr.postalCode}</b:column>
+                                        <b:column col-md="12">#{addr.country}</b:column>
+                                    </ui:fragment>
+                                    <ui:fragment rendered="#{addr eq null}">
+                                        <b:column col-md="12">No Street</b:column>
+                                        <b:column col-md="12">No City</b:column>
+                                        <b:column col-md="12">No Zip Code</b:column>
+                                        <b:column col-md="12">No Country</b:column>
+                                    </ui:fragment>
+                                </b:panel>
+                                <b:carousel startAnimation="false" showIndicators="false" wrap="false" style-class="wizardPseudoClass" showControls="false" slide="false">
+                                    <b:carouselItem>
+                                        <b:panel title="Book this property now!" look="info" collapsible="false" id="SummaryPanel">
+                                            <b:panelGrid col-spans="6,6" styleClass="text-right">
+                                                <h:outputLabel value="Per Night"/>
+                                                <h:outputText value="#{bookingActivityBean.property.price}">
+                                                    <f:convertNumber type="currency" currencyCode="USD"/>
+                                                </h:outputText>
+                                                <h:outputLabel value="Check In"/>
+                                                <b:dateTimePicker value="#{indexBean.dateFrom}" showTime="false" id="DateIn"
+                                                                  ajax="true" process="@form" update="priceGroup durationGroup" ondtchange="ajax:true"/>
+                                                <h:outputLabel value="Check Out"/>
+                                                <b:dateTimePicker value="#{indexBean.dateTo}" showTime="false" mode="popup" id="DateOut"
+                                                                  ajax="true" process="@form" update="priceGroup durationGroup" ondtchange="ajax:true"/>
+                                                <h:outputLabel value="Duration Days"/>
+                                                <h:panelGroup id="durationGroup">
+                                                    <h:outputText value="#{bookingCostBean.stayDuration}"/>
+                                                </h:panelGroup>                                                                                                
+                                                <h:outputLabel value="Total Cost"/>
+                                                <h:panelGroup id="priceGroup">
+                                                    <strong>
+                                                        <h:outputText value="#{bookingCostBean.priceForStay(bookingActivityBean.property)}" rendered="#{bookingActivityBean.property ne null}">
+                                                            <f:convertNumber type="currency" currencyCode="USD"/>
+                                                        </h:outputText>
+                                                    </strong>
+                                                </h:panelGroup>
+                                            </b:panelGrid>
+                                            <b:button value="Continue booking!" style-class="pull-right"
+                                                  onclick="$('.wizardPseudoClass').carousel('next');$('.wizardPseudoClass').carousel('pause');"
+                                                  look="success"/>
+                                        </b:panel>
+                                    </b:carouselItem>
+                                    <b:carouselItem>
+                                        <b:panel title="Enter your contact information" look="info" collapsible="false" id="InfoPanel">
+                                            <b:row>
+                                                <b:column col-md="12">
+                                                    <h4>Name:</h4>
+                                                </b:column>
+                                                <b:inputText value="#{bookingActivityBean.guest.firstname}" label="Firstname" placeholder="Firstname" col-md="4"/>
+                                                <b:inputText value="#{bookingActivityBean.guest.middlename}" label="Middlename" placeholder="Middlename" col-md="4"/>
+                                                <b:inputText value="#{bookingActivityBean.guest.lastname}" label="Lastname" placeholder="Lastname" col-md="4"/>
+                                            </b:row>
+                                            <b:row>
+                                                <b:column col-md="12">
+                                                    <h4>Address:</h4>
+                                                </b:column>
+                                                <b:inputText value="#{bookingActivityBean.address.street}" label="Street" placeholder="Street" col-md="6"/>
+                                                <b:inputText value="#{bookingActivityBean.address.city}" label="City" placeholder="City" col-md="6"/>
+                                                <b:inputText value="#{bookingActivityBean.address.postalCode}" label="Zip" placeholder="Zip" col-md="6"/>
+                                                <b:inputText value="#{bookingActivityBean.address.country}" label="Country" placeholder="Country" col-md="6"/>
+                                            </b:row>
+                                            <b:row>
+                                                <b:messages show-detail="true" show-summary="true" col-md="12"/>
+                                            </b:row>
+                                            <b:button value="Previous"
+                                                  onclick="$('.wizardPseudoClass').carousel('prev');$('.wizardPseudoClass').carousel('pause');"
+                                                  look="success" style-class="pull-left"/>
+                                            <b:commandButton value="Confirm Booking" action="#{bookingActivityBean.confirmBooking}"
+                                                             look="primary" style-class="pull-right" update="InfoPanel" process="@form"/>
+                                        </b:panel>
+                                    </b:carouselItem>
+                                </b:carousel>
+                            </b:row>
+
+                        </b:column>
+                    </b:row>
+                </b:form>
+            </div>
+        </section>
+    </ui:define>
+</ui:composition>

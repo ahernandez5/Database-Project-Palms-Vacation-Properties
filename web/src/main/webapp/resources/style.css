@@ -1,0 +1,65 @@
+
+.banner_area {
+    background-image: url('#{resource["images/bg.jpg"]}');
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 500px;
+}
+
+.banner_area .search_box {
+    margin-top: 125px;
+    background-color: #fff;
+}
+.header_area {
+    margin-top: 50px;
+}
+
+.accomodation_area {
+    min-height: 300px;
+}
+
+
+.book-btn {
+    margin-bottom: 25px;
+}
+
+.testimonial_area .panel-body {
+    
+}
+
+.banner_area.small-banner {
+    min-height: inherit;
+}
+.banner_area.small-banner .search_box {
+    
+}
+
+.wizardPseudoClass .carousel-inner .panel {
+    min-height: 300px;
+}
+
+.testimonial_area .panel-body p {
+    height: 100px;      
+    overflow-y: hidden;
+    overflow-wrap: normal;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;  
+    text-align: justify;
+}
+
+.front-tag-card {
+    min-height: 300px;    
+}
+
+.text-heading h4 {
+     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-height: 20px;
+}
+
+.wizardPseudoClass .carousel-inner {
+    overflow: visible !important;
+    min-height: 600px;
+}

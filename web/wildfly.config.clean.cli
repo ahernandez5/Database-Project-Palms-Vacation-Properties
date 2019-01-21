@@ -1,0 +1,5 @@
+    module remove --name=org.postgresql
+    /subsystem=datasources/jdbc-driver=postgresql:remove
+    /subsystem=datasources/data-source=palms:remove
+   
+    reload 
